@@ -1,11 +1,23 @@
-const express = require('express');
-const path = require('path');
+import express from "express";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
+
 const app = express();
 
-app.use(express.static(path.join(__dirname, 'build')));
+// Fix for __dirname in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-app.get('/', function (req, res) {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+// Serve static files from the build directory
+app.use(express.static(join(__dirname, "build")));
+
+// Serve index.html on root
+app.get("/", (req, res) => {
+  res.sendFile(join(__dirname, "build", "index.html"));
 });
 
-app.listen(9000);
+// Start server
+const PORT = process.env.PORT || 9000;
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});
